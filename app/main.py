@@ -32,6 +32,7 @@ async def models():
 @app.post("/v1/chat/completions", dependencies=[Depends(require_key)])
 async def chat(request: Request):
     body = await request.json()
+    body.setdefault("reasoning_effort", "none")
     url = f"{OLLAMA_URL}/v1/chat/completions"
 
     if body.get("stream"):
