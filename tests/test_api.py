@@ -32,3 +32,14 @@ def test_chat_proxies_to_ollama():
     r = client.post("/v1/chat/completions", json=BODY, headers=AUTH)
     assert r.status_code == 200
     assert r.json()["choices"][0]["message"]["content"] == "สวัสดี"
+
+
+@respx.mock
+def test_stream_passes_upstream_error():
+    respx.post(f"{OLLAMA_URL}/v1/chat/completions").mock(
+        return_value=httpx.Response(
+            404, json={"error": {"message": "model not found"}})
+    )
+    r = client.post("/v1/chat/completions",
+                    json={**BODY, "stream": True}, headers=AUTH)
+    assert r.status_code == 404
