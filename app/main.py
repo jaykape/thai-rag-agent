@@ -32,10 +32,6 @@ async def models():
 @app.post("/v1/chat/completions", dependencies=[Depends(require_key)])
 async def chat(request: Request):
     body = await request.json()
-    print("messages:", [(m["role"], str(m["content"])[:30])
-          for m in body["messages"]], flush=True)
-    print("model:", body.get("model"), "stream:",
-          body.get("stream"), flush=True)
     body.setdefault("reasoning_effort", "none")
     url = f"{OLLAMA_URL}/v1/chat/completions"
 
